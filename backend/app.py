@@ -39,7 +39,12 @@ def info():
 
 @app.route("/api/team", methods=["GET"])
 def team():
-    conn = get_db_connection()
+    try:
+        conn = get_db_connection()
+    except psycopg2.Error as exc:
+        app.logger.error("DB connection failed: %s", exc)
+        return jsonify({"error": "database unavailable"}), 503
+
     try:
         with conn.cursor() as cur:
             cur.execute(
@@ -47,6 +52,9 @@ def team():
                 "FROM members"
             )
             rows = cur.fetchall()
+    except psycopg2.Error as exc:
+        app.logger.error("DB query failed: %s", exc)
+        return jsonify({"error": "database query failed"}), 500
     finally:
         conn.close()
 

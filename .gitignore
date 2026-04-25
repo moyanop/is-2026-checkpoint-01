@@ -1,0 +1,7 @@
+# Archivos de variables de entorno
+.env
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+*.pyo

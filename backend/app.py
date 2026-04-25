@@ -1,9 +1,22 @@
+import os
+
+import psycopg2
 from flask import Flask, jsonify
 
 app = Flask(__name__)
 
 SERVICE_NAME = "teamboard-backend"
 SERVICE_VERSION = "1.0.0"
+
+
+def get_db_connection():
+    return psycopg2.connect(
+        host=os.environ["POSTGRES_HOST"],
+        port=os.environ.get("POSTGRES_PORT", "5432"),
+        dbname=os.environ["POSTGRES_DB"],
+        user=os.environ["POSTGRES_USER"],
+        password=os.environ["POSTGRES_PASSWORD"],
+    )
 
 
 @app.route("/api/health", methods=["GET"])

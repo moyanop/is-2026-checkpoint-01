@@ -1,0 +1,72 @@
+version: "3.8"
+
+# Definimos una red interna para que los contenedores se comuniquen entre sí
+networks:
+  teamboard_net:
+    driver: bridge
+
+# Definimos volumenes para persistencia de datos
+volumes:
+  pg_data:
+  portainer_data:
+
+services:
+  # Frontend
+  frontend:
+    build:
+      context:
+    restart:
+    ports:
+    networks:
+    depends_on:
+    deploy:
+      resources:
+        limits:
+          cpus:
+          memory:
+
+  # Backend
+  backend:
+    build:
+      context:
+    restart:
+    ports:
+    env_file:
+    networks:
+    depends_on:
+    deploy:
+      resources:
+        limits:
+          cpus:
+          memory:
+
+  # Base de Datos
+  database:
+    image:
+    restart:
+    env_file:
+    volumes:
+    networks:
+    healthcheck:
+      test:
+      interval:
+      timeout:
+      retries:
+    deploy:
+      resources:
+        limits:
+          cpus:
+          memory:
+
+  # Panel Portainer
+  portainer:
+    image:
+    restart:
+    ports:
+    volumes:
+    networks:
+    deploy:
+      resources:
+        limits:
+          cpus:
+          memory:

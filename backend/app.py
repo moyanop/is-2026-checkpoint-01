@@ -37,5 +37,32 @@ def info():
     })
 
 
+@app.route("/api/team", methods=["GET"])
+def team():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT nombre, apellido, legajo, feature, servicio, estado "
+                "FROM members"
+            )
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    members = [
+        {
+            "nombre": nombre,
+            "apellido": apellido,
+            "legajo": legajo,
+            "feature": feature,
+            "servicio": servicio,
+            "estado": estado,
+        }
+        for (nombre, apellido, legajo, feature, servicio, estado) in rows
+    ]
+    return jsonify(members)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

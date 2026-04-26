@@ -1,18 +1,21 @@
 /* Encabezado */
 header {
     width: 100%;
-    padding: 10px 0px;
+    padding: 20px 50px;
     text-align: left;
     margin-bottom: 20px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     border-bottom: 4px solid #003870;
     background-color: #013161;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Título dentro del encabezado */
 header h1 {
     color: #ffffff;
-    font-size: 3.5rem;
+    font-size: 3rem;
     margin: 0;
     margin-left: 20px;
     letter-spacing: 2px;
@@ -42,10 +45,11 @@ h1 {
 #backend-status {
     background: white;
     padding: 12px 25px;
-    border-radius: 50px;
+    border-radius: 20px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
+    margin-right: 20px;
     font-weight: 600;
+    font-size: 1.2rem;
 }
 
 #status-label {

@@ -9,3 +9,13 @@
 | Jiménez, Franco                 | 31848  | Feature 03 | Backend                        |
 | Portillo Colinas, Franco Javier | 31089  | Feature 04 | Base de Datos                  |
 | Calvo, Bautista                 | 32156  | Feature 05 | Panel Portainer                |
+
+## Portainer
+
+Para acceder al portainer debemos ejecutar por terminal el siguiente comando:
+
+```sh
+docker compose up -d
+```
+
+y luego acceder por el siguiente link: http://localhost:9000

@@ -28,35 +28,53 @@ services:
   # Backend
   backend:
     build:
-      context:
-    restart:
+      context: ./backend
+    restart: unless-stopped
     ports:
+      - "5000:5000"
     env_file:
+      - .env
     networks:
+      - teamboard_net
     depends_on:
+      - database
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.5"
+          memory: 512M
 
   # Base de Datos
   database:
-    image:
-    restart:
+    image: postgres:16-alpine
+    restart: unless-stopped
+
     env_file:
+      - .env
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
     volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
     networks:
+      - teamboard_net
+
     healthcheck:
-      test:
-      interval:
-      timeout:
-      retries:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.50"
+          memory: 256M
 
   # Panel Portainer
   portainer:

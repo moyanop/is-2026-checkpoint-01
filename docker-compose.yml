@@ -22,8 +22,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.5"
+          memory: 512M
 
   # Backend
   backend:
@@ -46,45 +46,44 @@ services:
 
   # Base de Datos
   database:
-  image: postgres:16-alpine
-  restart: unless-stopped
-
-  env_file:
-    - .env
-
-  environment:
-    POSTGRES_USER: ${POSTGRES_USER}
-    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    POSTGRES_DB: ${POSTGRES_DB}
-
-  volumes:
-    - pg_data:/var/lib/postgresql/data
-    - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  networks:
-    - teamboard_net
-
-  healthcheck:
-    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-    interval: 5s
-    timeout: 5s
-    retries: 5
-
-  deploy:
-    resources:
-      limits:
-        cpus: "0.50"
-        memory: 256M
-
-  # Panel Portainer
-  portainer:
-    image:
-    restart:
-    ports:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
+      - teamboard_net
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.50"
+          memory: 256M
+
+  # Panel Portainer
+  portainer:
+    image: "portainer/portainer-ce:2.40.0-alpine"
+    restart: unless-stopped
+    ports: "9000:9000"
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks: 
+      - teamboard_net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: 128M

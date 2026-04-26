@@ -28,17 +28,21 @@ services:
   # Backend
   backend:
     build:
-      context:
-    restart:
+      context: ./backend
+    restart: unless-stopped
     ports:
+      - "5000:5000"
     env_file:
+      - .env
     networks:
+      - teamboard_net
     depends_on:
+      - database
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.5"
+          memory: 512M
 
   # Base de Datos
   database:

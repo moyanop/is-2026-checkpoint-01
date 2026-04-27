@@ -7,7 +7,7 @@ networks:
 volumes:
   pg_data:
   portainer_data:
-
+  
 services:
   # Frontend
   frontend:
@@ -74,11 +74,14 @@ services:
           cpus: "0.50"
           memory: 256M
 
-  # Panel Portainer                                                                                             
+  # Panel Portainer
   portainer:
     image: "portainer/portainer-ce:2.40.0-alpine"
     restart: unless-stopped
-    ports: [ "9000:9000" ]
+    env_file: 
+    - .env 
+    ports: 
+    - ${PORTAINER_PORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data

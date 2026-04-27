@@ -2,8 +2,10 @@ import os
 
 import psycopg2
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 SERVICE_NAME = "teamboard-backend"
 SERVICE_VERSION = "1.0.0"

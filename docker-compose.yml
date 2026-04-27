@@ -1,72 +1,87 @@
-version: "3.8"
+version: "3.8"                                                                                                  
+   
+  # Definimos una red interna para que los contenedores se comuniquen entre sí                                    
+  networks:       
+    teamboard_net:                                                                                                
+      driver: bridge
+                                                                                                                  
+  # Definimos volumenes para persistencia de datos
+  volumes:                                                                                                        
+    pg_data:      
+    portainer_data:                                                                                               
+   
+  services:                                                                                                       
+    # Frontend    
+    frontend:
+      build:
+        context:
+      restart:
+      ports:                                                                                                      
+      networks:
+      depends_on:                                                                                                 
+      deploy:     
+        resources:
+          limits:
+            cpus:                                                                                                 
+            memory:
+                                                                                                                  
+    # Backend     
+    backend:
+      build:
+        context: ./backend
+      restart: unless-stopped
+      ports:
+        - "5000:5000"
+      env_file:                                                                                                   
+        - .env
+      networks:                                                                                                   
+        - teamboard_net
+      depends_on:
+        - database
+      deploy:                                                                                                     
+        resources:
+          limits:                                                                                                 
+            cpus: "0.5"
+            memory: 512M
 
-# Definimos una red interna para que los contenedores se comuniquen entre sí
-networks:
-  teamboard_net:
-    driver: bridge
+    # Base de Datos
+    database:
+      image: postgres:16-alpine                                                                                   
+      restart: unless-stopped
+      env_file:                                                                                                   
+        - .env    
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}                                                                   
+        POSTGRES_DB: ${POSTGRES_DB}
+      volumes:                                                                                                    
+        - pg_data:/var/lib/postgresql/data
+        - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql                                                
+      networks:
+        - teamboard_net                                                                                           
+      healthcheck:                                                                                                
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+        interval: 5s                                                                                              
+        timeout: 5s                                                                                               
+        retries: 5
+      deploy:                                                                                                     
+        resources:
+          limits:
+            cpus: "0.50"
+            memory: 256M
 
-# Definimos volumenes para persistencia de datos
-volumes:
-  pg_data:
-  portainer_data:
-
-services:
-  # Frontend
-  frontend:
-    build:
-      context:
-    restart:
-    ports:
-    networks:
-    depends_on:
-    deploy:
-      resources:
-        limits:
-          cpus:
-          memory:
-
-  # Backend
-  backend:
-    build:
-      context:
-    restart:
-    ports:
-    env_file:
-    networks:
-    depends_on:
-    deploy:
-      resources:
-        limits:
-          cpus:
-          memory:
-
-  # Base de Datos
-  database:
-    image:
-    restart:
-    env_file:
-    volumes:
-    networks:
-    healthcheck:
-      test:
-      interval:
-      timeout:
-      retries:
-    deploy:
-      resources:
-        limits:
-          cpus:
-          memory:
-
-  # Panel Portainer
-  portainer:
-    image:
-    restart:
-    ports:
-    volumes:
-    networks:
-    deploy:
-      resources:
-        limits:
-          cpus:
-          memory:
+    # Panel Portainer                                                                                             
+    portainer:
+      image: "portainer/portainer-ce:2.40.0-alpine"                                                               
+      restart: unless-stopped
+      ports: ["9000:9000"]                                                                                        
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock                                                               
+        - portainer_data:/data
+      networks:                                                                                                   
+        - teamboard_net
+      deploy:                                                                                                     
+        resources:
+          limits:
+            cpus: "0.3"
+            memory: 128M

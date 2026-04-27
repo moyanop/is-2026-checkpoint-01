@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TeamBoard - UTN La Plata</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+    <header>
+        <div class="brand-container">
+            <img src="logo.png" alt="Logo TeamBoard" class="logo">
+            <h1 id="group-name">Piberio+1</h1>
+        </div>
+        
+        <div id="backend-status">
+            Estado del Backend: <span id="status-label">Cargando...</span>
+        </div>
+    </header>
+    
+    
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Legajo</th>
+                <th>Feature</th>
+                <th>Servicio</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody id="team-table-body">
+            </tbody>
+    </table>
+
+    <script src="app.js"></script>
+</body>
+</html>

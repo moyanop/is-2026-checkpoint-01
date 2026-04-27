@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Definimos una red interna para que los contenedores se comuniquen entre sí
 networks:
   teamboard_net:
@@ -9,66 +7,72 @@ networks:
 volumes:
   pg_data:
   portainer_data:
-
+  
 services:
   # Frontend
   frontend:
     build:
-      context:
-    restart:
+      context: ./frontend
+    restart: unless-stopped
+    env_file:
+      - .env
     ports:
+      - ${FRONTEND_PORT}
     networks:
+      - teamboard_net
     depends_on:
+      - backend
     deploy:
       resources:
         limits:
-          cpus:
-          memory:
+          cpus: "0.3"
+          memory: 256M
 
-            # Backend
+  # Backend
   backend:
     build:
       context: ./backend
     restart: unless-stopped
-    ports:
-      - "5000:5000"
     env_file:
       - .env
+    ports:
+      - ${BACKEND_PORT}
     networks:
       - teamboard_net
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     deploy:
       resources:
         limits:
           cpus: "0.5"
           memory: 512M
 
-    # Base de Datos
-    database:
-      image: postgres:16-alpine                                                                                   
-      restart: unless-stopped
-      env_file:                                                                                                   
-        - .env    
-      environment:
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}                                                                   
-        POSTGRES_DB: ${POSTGRES_DB}
-      volumes:                                                                                                    
-        - pg_data:/var/lib/postgresql/data
-        - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql                                                
-      networks:
-        - teamboard_net                                                                                           
-      healthcheck:                                                                                                
-        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-        interval: 5s                                                                                              
-        timeout: 5s                                                                                               
-        retries: 5
-      deploy:                                                                                                     
-        resources:
-          limits:
-            cpus: "0.50"
-            memory: 256M
+  # Base de Datos
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - teamboard_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
 
   # Panel Portainer
   portainer:

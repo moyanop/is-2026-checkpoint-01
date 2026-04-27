@@ -10,8 +10,11 @@ COPY html/ ./html/
 # Nos movemos a html para que el servidor sirva desde ahí
 WORKDIR /app/html
 
-# Informamos que el contenedor usa el puerto 8080 
-EXPOSE 8080
+# Definimos una variable de entorno con un valor por defecto
+ENV FRONT_PORT=8080
+
+# Exponemos la variable (informativo)
+EXPOSE $FRONT_PORT
 
 # Ejecutamos el servidor minimalista de Python 
 CMD ["python3", "-m", "http.server", "8080"]

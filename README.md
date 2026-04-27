@@ -24,7 +24,8 @@ Requisitos
 - Docker Compose v2.
 - Puertos libres en el host: 5000, 8080 y 9000.
   Configuración
-  Las credenciales de Postgres se leen desde un archivo `.env` en la raíz del repositorio. Ese archivo no se versiona. Antes del primer arranque, crearlo con el siguiente contenido:
+  Las credenciales de Postgres se leen desde un archivo `.env` en la raíz del repositorio. 
+  Ese archivo no se versiona. Antes del primer arranque, crearlo con el siguiente contenido:
 
 ```env
 POSTGRES_HOST=database
@@ -39,58 +40,6 @@ Levantar el entorno
 
 ```sh
 docker compose up -d --build
-```
-
-Servicios disponibles:
-Frontend: http://localhost:8080
-Backend: http://localhost:5000
-Portainer: http://localhost:9000
-Para detener los contenedores manteniendo los datos:
-
-```sh
-docker compose down
-```
-
-Para detener y eliminar también los volúmenes (borra el contenido de la base):
-
-```sh
-docker compose down -v
-```
-
-Endpoints del backend
-`GET /api/health` — estado del servicio.
-`GET /api/info` — nombre, versión y lista de endpoints.
-`GET /api/team` — lista de integrantes leídos desde la tabla `members`.
-Base de datos
-La tabla `members` se crea y se siembra al primer arranque del contenedor de Postgres a partir de `database/init.sql`. El script solo se ejecuta cuando el datadir está vacío; si se modifica el SQL después del primer `up`, hace falta `docker compose down -v` para que vuelva a aplicarse.
-
-```sql
-CREATE TABLE members (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    legajo VARCHAR(20) NOT NULL,
-    feature VARCHAR(50) NOT NULL,
-    servicio VARCHAR(50) NOT NULL,
-    estado VARCHAR(20) NOT NULL
-);
-```
-
-Comandos útiles
-
-```sh
-docker compose logs -f backend
-docker compose ps
-docker compose exec database psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
-docker compose config > /dev/null
-```
-
-## Portainer
-
-Para acceder al portainer debemos ejecutar por terminal el siguiente comando:
-
-```sh
-docker compose up -d
 ```
 
 Nos fijamos que el contenedor este levantado mediante
